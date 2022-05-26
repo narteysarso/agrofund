@@ -20,7 +20,7 @@ contract Agrofund {
     string _self_destruct_msg = "";
 
     uint public projectsLength = 0;
-    uint public registrationFee = 1000000000000000000 wei;
+    uint public registrationFee = 10 ** DECIMALS;
     
     uint public serviceCharge = 15;
     uint private totalfees = 0;
@@ -123,7 +123,7 @@ contract Agrofund {
         p.images = _images;
         p.description = _description;
         p.location =_location;
-        p.goal = _goal * 10 ** DECIMALS;
+        p.goal = _goal;
         p.startDate = _startDate;
         p.endDate = _endDate;
         p.owner = msg.sender;
