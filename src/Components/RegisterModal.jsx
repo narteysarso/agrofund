@@ -37,7 +37,6 @@ const RegistrationForm = ({ onReset, initialValues = {} }) => {
                         } catch (error) {
                             setError(error.message);
                         } finally {
-
                             setLoading(false);
                         }
 

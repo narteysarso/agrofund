@@ -51,8 +51,9 @@ export async function getContract() {
     return contract;
 }
 
-export async function getProjects(indexes = []) {
+export async function getProjects(indexes) {
     const contract = await getContract();
+
 
     const results = await new Promise.all(
         indexes.reduce(
@@ -70,13 +71,6 @@ export async function getProjects(indexes = []) {
     return results;
 }
 
-export async function getProject(index) {
-    const contract = await getContract();
-
-    const _projectDetails = await contract.methods.projects(index).call();
-
-    return makeProject(_projectDetails);
-}
 
 export async function createProject(account, projectInfo = {}) {
     const contract = await getContract();
@@ -128,10 +122,16 @@ export async function setRegistrationFee(newFee) {
     await contract.methods.setRegistrationFee(newFee).send();
 }
 
-export async function transferProjectOwnership(toAddress) {
+export async function transferProjectOwnership(account, index, toAddress) {
     const contract = await getContract();
 
-    await contract.methods.transferProjectOwnership(toAddress).send();
+    await contract.methods.transferProjectOwnership(index, toAddress).send({from : account});
+}
+
+export async function transferOwnership(account, toAddress) {
+    const contract = await getContract();
+
+    await contract.methods.transferOwnership(toAddress).send({from : account});
 }
 
 export async function setSelfDestruct(bool, message) {
@@ -149,7 +149,7 @@ export async function fundProject(account, index, amount) {
 export async function withdrawFees(account) {
     const contract = await getContract();
 
-    await contract.methods.withdrawFees(account).send();
+    await contract.methods.withdrawFees(account).send({from: account});
 }
 
 export async function getContractOwner(){
@@ -175,5 +175,7 @@ export async function withdrawFunds(account, index) {
 export async function getBalance() {
     const contract = await getContract();
 
-    await contract.methods.getBalance().send();
+    const balance = await contract.methods.getBalance().call();
+
+    return new BigNumber(balance).shiftedBy(-ERC20_DECIMALS).toFixed(2)
 }

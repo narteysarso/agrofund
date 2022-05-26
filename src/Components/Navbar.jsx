@@ -1,5 +1,5 @@
 import { Button, Space } from "antd";
-import { AgroFundConsumer} from "../Context/AgrofundContract";
+import { AgroFundConsumer } from "../Context/AgrofundContract";
 
 const Register = () => (
     <AgroFundConsumer>
@@ -27,25 +27,45 @@ const CreateProject = () => (
 
 const Wallet = () => (
     <AgroFundConsumer>
-    {
-        ({ account , accountBalance, connectWallet}) => (
-            account ?  <Button shape="round" type="primary">{accountBalance} cUSD</Button> : <Button 
-            type="default" 
-            shape="round"
-            onClick={() => connectWallet()}
-        > 
-            Connect Wallet
-        </Button>
-        )
-    }
-</AgroFundConsumer>
+        {
+            ({ account, accountBalance, connectWallet }) => (
+                account ? <Button shape="round" type="primary">{accountBalance} cUSD</Button> : <Button
+                    type="default"
+                    shape="round"
+                    onClick={() => connectWallet()}
+                >
+                    Connect Wallet
+                </Button>
+            )
+        }
+    </AgroFundConsumer>
 )
 
 const WithdrawServiceCharges = () => {
     return (<AgroFundConsumer>
         {
-            ({isContractOwner}) => (
-                isContractOwner ? <Button type="primary">Withdraw Service Charges</Button> : null
+            ({ isContractOwner, setWithdrawCharges }) => (
+                isContractOwner ? <Button type="danger" onClick={setWithdrawCharges.bind(this, true) }>Withdraw Service Charges</Button> : null
+            )
+        }
+    </AgroFundConsumer>)
+}
+
+const TransferContractCharges = () => {
+    return (<AgroFundConsumer>
+        {
+            ({ isContractOwner, setTransferOwnership }) => (
+                isContractOwner ? <Button type="danger" onClick={setTransferOwnership.bind(this, true)}>Transfer Contract</Button> : null
+            )
+        }
+    </AgroFundConsumer>)
+}
+
+const ContractBalance = () => {
+    return (<AgroFundConsumer>
+        {
+            ({ isContractOwner, charges }) => (
+                isContractOwner ? <Button type="ghost" disabled shape="round">{charges} cUSD Balance</Button> : null
             )
         }
     </AgroFundConsumer>)
@@ -60,13 +80,17 @@ export default function Navbar() {
             <h2>AgroFund</h2>
             <div>
                 <>
-                    <Register />
-                    <CreateProject />
-                    <WithdrawServiceCharges />
                     <Space>
+                        <Register />
+                        <CreateProject />
+                        <WithdrawServiceCharges />
+                        <TransferContractCharges />
+                    </Space>
+                    <Space>
+                        <ContractBalance />
                         <Wallet />
                     </Space>
-                </> 
+                </>
 
             </div>
         </div>

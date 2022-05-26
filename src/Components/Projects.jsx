@@ -1,6 +1,6 @@
-import { CrownOutlined, EllipsisOutlined } from "@ant-design/icons";
+import { CrownOutlined} from "@ant-design/icons";
 import { createIcon } from "@download/blockies";
-import { Avatar, Badge, Button, Card, Col, Divider, Popconfirm, Progress, Row, Space, Typography } from "antd";
+import { Avatar, Badge, Button, Card, Col, Popconfirm, Row, Space, Typography } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { AgroFundConsumer } from "../Context/AgrofundContract";
 import { makeFunded } from "../helpers/project";
@@ -12,6 +12,16 @@ function FundProject({ fullyFunded = false, project = {} }) {
         <AgroFundConsumer>
             {({ fundProject, setFundProject }) => (
                 fullyFunded ? <Button type="primary" icon={<CrownOutlined />} /> : !fundProject ? <Button type="primary" onClick={setFundProject.bind(this, project)}>Fund</Button> : null
+            )}
+        </AgroFundConsumer>
+    )
+}
+
+function TransferProject({ isOwner, project = {} }) {
+    return (
+        <AgroFundConsumer>
+            {({ setTransferProject }) => (
+                isOwner? <Button type="default" onClick={setTransferProject.bind(this, project)} >Transfer</Button> : null
             )}
         </AgroFundConsumer>
     )
@@ -32,6 +42,7 @@ function WithdrawFunds({ isOwner, fullyFunded, index}) {
         </AgroFundConsumer>
     )
 }
+
 
 function AvatarIcon({account, isOwner = false}){
     const icon = useMemo(() => createIcon({
@@ -83,7 +94,7 @@ function ProjectCard(projectInfo = {}) {
             actions={[
 
                 <FundProject project={projectInfo} fullyFunded={fullyFunded} />,
-                <EllipsisOutlined key="ellipsis" />,
+                <TransferProject isOwner={isOwner} project={projectInfo}/>,
             ]}
         >
             <Card.Meta

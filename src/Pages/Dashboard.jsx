@@ -5,6 +5,9 @@ import ProjectModal from "../Components/CreateProjectModal";
 import FundProjectModal from "../Components/Fund";
 import Projects from "../Components/Projects";
 import RegisterModal from "../Components/RegisterModal";
+import TransferOwnershipModal from "../Components/TransferContract";
+import TransferProjectModal from "../Components/TransferProject";
+import WithdrawChargesModal from "../Components/WithdrawCharges";
 
 export default function Dashboard(){
 
@@ -17,6 +20,9 @@ export default function Dashboard(){
                 <RegisterModal/>
                 <ProjectModal />
                 <FundProjectModal />
+                <TransferProjectModal />
+                <TransferOwnershipModal />
+                <WithdrawChargesModal />
                 <Projects />
             </Col>
             <Col xs={0} md={5}>

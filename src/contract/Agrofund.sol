@@ -218,9 +218,9 @@ contract Agrofund {
     function withdrawFees(address payable _to) external payable onlyOwner {
         uint collectedFees = totalfees;
 
-        _to.transfer(totalfees);
-
         totalfees = 0;
+        
+        _to.transfer(totalfees);
 
         emit FeesWithdrawn(msg.sender, _to, collectedFees);
     }

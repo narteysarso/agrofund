@@ -55,6 +55,7 @@ const FundProjectForm = ({ project_index, onReset }) => {
         </AgroFundConsumer>
     )
 }
+
 export default function FundProjectModal() {
     return (
         <AgroFundConsumer>

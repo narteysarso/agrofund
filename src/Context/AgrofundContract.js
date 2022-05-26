@@ -1,5 +1,5 @@
 import { createContext, useState, useCallback, useEffect } from "react";
-import { connectWallet as cW, createProject, getAccountBalance, getMembership, getRegistrationFee, register, fundProject as sponsorProject, withdrawFunds, getContractOwner} from "../services/agrofund";
+import { connectWallet as cW, createProject, getAccountBalance, getMembership, getRegistrationFee, register, fundProject as sponsorProject, withdrawFunds, getContractOwner, transferProjectOwnership, transferOwnership as transferContract, withdrawFees} from "../services/agrofund";
 import {addProjectCreatedSubscriber, removeProjectCreatedSubscriber} from "../listeners/projectCreated";
 import { makeProject } from "../helpers/project";
 import { ZERO_ADDRESS } from "../constants";
@@ -17,15 +17,19 @@ export function AgroFundConsumer({children}){
 export function AgroFundProvider({children}){
     const [account, setAccount] = useState(null);
     const [isContractOwner, setContractOwner] = useState(false);
+    const [withdrawCharges, setWithdrawCharges] = useState(false);
     const [registrationModal, showRegistrationModal] = useState(false);
     const [selectedCategories, setSelectedCategories] = useState(new Map());
     const [projects, setProjects] = useState([]);
     const [projectModal, showProjectModal] = useState(false);
+    const [transferProject, setTransferProject] = useState(null);
+    const [transferOwnership, setTransferOwnership] = useState(null);
     const [isRegistered, markRegistered] = useState(false);
     const [fundProject, setFundProject] = useState(null);
     const [accountBalance, setAccountBalance] = useState(0);
+    const [contractBalance, setContractBalance] = useState(0);
     const [membership, setMemebership] = useState(null);
-    const [fee, setFee] = useState(0);
+    const [charges, setCharges] = useState(0);
     const [error, setError] = useState(null);
 
     const connectWallet = useCallback(
@@ -55,6 +59,18 @@ export function AgroFundProvider({children}){
         await withdrawFunds(account, index)
     }
 
+    const transferProjectOwnershipOnContract = async (index, toAddress) => {
+        await transferProjectOwnership(account, index, toAddress);
+    }
+    
+    const transferOwnershipOfContract = async (toAddress) => {
+        await transferContract (account, toAddress);
+    }
+
+    const withdrawContractCharges = async (toAddress) => {
+        await withdrawFees(toAddress);
+    }
+
     const selectCategory = (key) => {
         setSelectedCategories( prev => {
 
@@ -75,7 +91,7 @@ export function AgroFundProvider({children}){
         (async() => {
             try {
                 await connectWallet();
-                const [fee, member, contractOwner] = await Promise.all([getRegistrationFee(), getMembership(account), getContractOwner()]);
+                const [charges, member, contractOwner] = await Promise.all([getRegistrationFee(), getMembership(account), getContractOwner()]);
                 
                 if(member.username && member.addressRecievable !== ZERO_ADDRESS){
                     markRegistered(true);
@@ -86,7 +102,8 @@ export function AgroFundProvider({children}){
                     setContractOwner(true);
                 }
 
-                setFee(fee);
+                setCharges(charges);
+                // setContractBalance(balance)
             } catch (error) {
                 setError(error.message);
             }
@@ -119,6 +136,7 @@ export function AgroFundProvider({children}){
         <AgroFundContractContext.Provider value={{
             account,
             accountBalance,
+            contractBalance,
             membership,
             isRegistered,
             registrationModal,
@@ -127,8 +145,14 @@ export function AgroFundProvider({children}){
             projects,
             fundProject,
             isContractOwner,
+            transferProject,
+            transferOwnership,
+            charges,
+            withdrawCharges,
+            setWithdrawCharges,
             setFundProject,
             showProjectModal,
+            setContractBalance,
             setAccount,
             connectWallet,
             showRegistrationModal,
@@ -136,7 +160,12 @@ export function AgroFundProvider({children}){
             createProjectOnContract,
             selectCategory,
             fundProjectOnContract,
-            withdrawFundsFromContract
+            withdrawFundsFromContract,
+            setTransferProject,
+            transferProjectOwnershipOnContract,
+            setTransferOwnership,
+            withdrawContractCharges,
+            transferOwnershipOfContract
         }}>
             {children}
         </AgroFundContractContext.Provider>
