@@ -135,7 +135,7 @@ export default function Projects() {
                                     :
                                     projects
                             )?.map(
-                                projectInfo => <Col xs={24} sm={8} key={projectInfo.index} ><ProjectCard {...projectInfo} account={account} /></Col>)
+                                (projectInfo, idx) => <Col xs={24} sm={8} key={idx} ><ProjectCard {...projectInfo} account={account} /></Col>)
                         }
                     </Row>
                 </>
