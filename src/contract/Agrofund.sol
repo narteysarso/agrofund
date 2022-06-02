@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 contract Agrofund {
 
+    // constants
     uint8 constant public DECIMALS = 18;
     uint8 constant public MEMBERSTATUSACTIVE = 1;
     uint8 constant public MEMBERSTATUSINACTIVE = 0;
@@ -109,6 +110,7 @@ contract Agrofund {
         owner = msg.sender;
     }
 
+    // create a new project 
     function createProject(
         string memory _name,
         string memory _description,
@@ -147,6 +149,7 @@ contract Agrofund {
 
     }
 
+    // register new user as a member
     function register(
         string memory _username,
         string memory _portfolio,
@@ -167,12 +170,14 @@ contract Agrofund {
         emit MemberRegistered(msg.sender, _username,_image, _description, _portfolio);
     }
 
+    // set registration fee to `_fee`
     function setRegistrationFee(uint _fee) external notDestructed  onlyOwner  {
         uint oldfee = registrationFee;
         registrationFee = _fee;
         emit ChangedRegistrationFee(msg.sender, oldfee, _fee);
     }
 
+    // transfer ownership of project `_index` to `_to`
     function transferProjectOwnership(uint _index, address _to) external notDestructed onlyProjectOwner(_index) onlyActiveMember(_to){
         Project storage project = projects[_index];
         project.owner = _to;
@@ -180,16 +185,19 @@ contract Agrofund {
         emit ProjectOwnershipTransfered(_index, msg.sender, _to);
     }
 
+    // transfer contract ownership to `_address`
     function transferOwnership(address _address) external notDestructed onlyOwner {
         owner = _address;
         emit OwnershipTransferred(msg.sender, _address);
     }
     
+    // enable self destruct of contract with message `message`
     function setSelfDestruct(bool _bool, string memory _message) external notDestructed onlyOwner {
         _self_destruct = _bool;
         _self_destruct_msg = _message;
     }
 
+    // fund project at index `_index`
     function fundProject(uint _index) external payable notDestructed onlyActiveMember(msg.sender) {
         require(projects[_index].status == PROJECTSTATUSFUNDING, "Project does not exist or is not receiving funds");
         require(msg.value > 0 , "Insufficient amount");
@@ -198,6 +206,7 @@ contract Agrofund {
         emit ProjectFunded(_index, msg.sender, msg.value);
     }
 
+    // withdraw funds of project at index `_index`
     function withdrawFunds(uint _index) external payable notDestructed onlyProjectOwner(_index){
         Project storage project = projects[_index];
         require(project.funds > 0 && project.funds >= project.goal, "Project must be fully funded");
@@ -211,10 +220,12 @@ contract Agrofund {
         emit ProjectDefunded(_index, msg.sender, fundsAfterFee, fee);
     }
 
+    // get total fees accumulated
     function getFees() external view onlyOwner returns(uint){
         return totalfees;
     }
 
+    // withdraw total fees
     function withdrawFees(address payable _to) external payable onlyOwner {
         uint collectedFees = totalfees;
 
@@ -225,6 +236,7 @@ contract Agrofund {
         emit FeesWithdrawn(msg.sender, _to, collectedFees);
     }
 
+    // return balance remaining in contract
     function getBalance() external  view onlyOwner returns(uint) {
         return address(this).balance;
     }
