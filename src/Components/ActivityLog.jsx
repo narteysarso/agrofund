@@ -29,7 +29,7 @@ export default function ActivityLog() {
             }
             const result = makeFunded(event.returnValues);
 
-            const log = `#${event.blockNumber}: Project Funded ${result.amount} cUSD`;
+            const log = `#${event.blockNumber}: Project Funded ${result.amount} Celo`;
 
             setActivities(prev => [log, ...prev]);
         } )

@@ -5,7 +5,7 @@ import { makeMember } from "../helpers/member";
 import { makeProject } from "../helpers/project";
 import agrofundInterface from "../interface/agrofund";
 
-const ERC20_DECIMALS = agrofundInterface.decimals;
+const DECIMALS = agrofundInterface.decimals;
 
 async function getProvider() {
     if (!window.celo) {
@@ -38,9 +38,9 @@ export async function getAccountBalance(account) {
 
     const balance = await provider.getTotalBalance(account);
 
-    const cusd = balance.CELO.shiftedBy(-ERC20_DECIMALS).toFixed(2);
+    const celo = balance.CELO.shiftedBy(-DECIMALS).toFixed(2);
 
-    return cusd;
+    return celo;
 }
 
 export async function getContract() {
@@ -80,7 +80,7 @@ export async function createProject(account, projectInfo = {}) {
         description,
         images,
         location,
-        new BigNumber(goal).shiftedBy(ERC20_DECIMALS),
+        new BigNumber(goal).shiftedBy(DECIMALS),
         startDate,
         endDate
     ).send({ from: account });
@@ -113,7 +113,7 @@ export async function getRegistrationFee() {
 
     const fee = await contract.methods.registrationFee().call();
 
-    return new BigNumber(fee).shiftedBy(-ERC20_DECIMALS).toFixed(2);
+    return new BigNumber(fee).shiftedBy(-DECIMALS).toFixed(2);
 }
 
 export async function setRegistrationFee(newFee) {
@@ -143,7 +143,7 @@ export async function setSelfDestruct(bool, message) {
 export async function fundProject(account, index, amount) {
     const contract = await getContract();
 
-    await contract.methods.fundProject(index).send({ from: account, value: new BigNumber(amount).shiftedBy(ERC20_DECIMALS)});
+    await contract.methods.fundProject(index).send({ from: account, value: new BigNumber(amount).shiftedBy(DECIMALS)});
 }
 
 export async function withdrawFees(account) {
@@ -163,7 +163,7 @@ export async function getFees() {
 
     const fee = await contract.methods.getFees().call();
 
-    return new BigNumber(fee).shiftedBy(-ERC20_DECIMALS).toFixed(2);
+    return new BigNumber(fee).shiftedBy(-DECIMALS).toFixed(2);
 }
 
 export async function withdrawFunds(account, index) {
@@ -177,5 +177,5 @@ export async function getBalance() {
 
     const balance = await contract.methods.getBalance().call();
 
-    return new BigNumber(balance).shiftedBy(-ERC20_DECIMALS).toFixed(2)
+    return new BigNumber(balance).shiftedBy(-DECIMALS).toFixed(2)
 }

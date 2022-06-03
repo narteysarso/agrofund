@@ -104,8 +104,8 @@ function ProjectCard(projectInfo = {}) {
             />
             <Space direction="vertical">
                 <span>Location: {location}</span>
-                <span>Goal: {goal} cUSD</span>
-                <span>Fund: {funded} cUSD</span>
+                <span>Goal: {goal} Celo</span>
+                <span>Fund: {funded} Celo</span>
                 {/* <Progress percent={funded} size="small" status="active" /> */}
                 <span>Starting: {new Date(parseInt(startDate)).toDateString()}</span>
                 <span>Ending: {new Date(parseInt(endDate)).toDateString()}</span>

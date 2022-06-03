@@ -29,7 +29,7 @@ const Wallet = () => (
     <AgroFundConsumer>
         {
             ({ account, accountBalance, connectWallet }) => (
-                account ? <Button shape="round" type="primary">{accountBalance} cUSD</Button> : <Button
+                account ? <Button shape="round" type="primary">{accountBalance} Celo</Button> : <Button
                     type="default"
                     shape="round"
                     onClick={() => connectWallet()}
@@ -65,7 +65,7 @@ const ContractBalance = () => {
     return (<AgroFundConsumer>
         {
             ({ isContractOwner, charges }) => (
-                isContractOwner ? <Button type="ghost" disabled shape="round">{charges} cUSD Balance</Button> : null
+                isContractOwner ? <Button type="ghost" disabled shape="round">{charges} Celo Balance</Button> : null
             )
         }
     </AgroFundConsumer>)

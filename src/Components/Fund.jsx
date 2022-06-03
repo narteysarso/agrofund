@@ -40,7 +40,7 @@ const FundProjectForm = ({ project_index, onReset }) => {
                         tooltip="How much do you intend to fund?"
                         rules={[{ required: true, message: 'Please provide a valid amount' }]}
                     >
-                        <InputNumber min={1} max={1000000} style={{ width: '100%' }} addonAfter="cUSD" />
+                        <InputNumber min={1} max={1000000} style={{ width: '100%' }} addonAfter="Celo" />
                     </Form.Item>
 
                     <Form.Item>
