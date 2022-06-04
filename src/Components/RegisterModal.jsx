@@ -108,7 +108,7 @@ export default function RegisterModal() {
         <AgroFundConsumer>
             {({ registrationModal, showRegistrationModal }) => (
                 <Modal
-                    title="Member Registration"
+                    title="Member Registration (Costs 1 Celo)"
                     visible={registrationModal}
                     onCancel={() => showRegistrationModal(false)}
                     footer={null}
