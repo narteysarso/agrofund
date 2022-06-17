@@ -44,7 +44,8 @@ export default function ActivityLog() {
             size="small"
             header={<h3>Live Updates</h3>}
             bordered
-            dataSource={activities?.sort((a, b) => a.localeCompare(b))}
+            dataSource={activities?.reverse()}
+            style={{maxHeight: "500px", overflowY: "scroll"}}
             renderItem={
                 item => <List.Item>{item}</List.Item>
             }

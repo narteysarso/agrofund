@@ -1,7 +1,8 @@
 import { createContext, useState, useCallback, useEffect } from "react";
 import { connectWallet as cW, createProject, getAccountBalance, getMembership, getRegistrationFee, register, fundProject as sponsorProject, withdrawFunds, getContractOwner, transferProjectOwnership, transferOwnership as transferContract, withdrawFees} from "../services/agrofund";
 import {addProjectCreatedSubscriber, removeProjectCreatedSubscriber} from "../listeners/projectCreated";
-import { makeProject } from "../helpers/project";
+import {addProjectFundedSubscriber, removeProjectFundedSubscriber} from "../listeners/projectFunded";
+import { makeProject, makeFunded } from "../helpers/project";
 import { ZERO_ADDRESS } from "../constants";
 export const AgroFundContractContext = createContext();
 
@@ -21,6 +22,7 @@ export function AgroFundProvider({children}){
     const [registrationModal, showRegistrationModal] = useState(false);
     const [selectedCategories, setSelectedCategories] = useState(new Map());
     const [projects, setProjects] = useState([]);
+    const [projectFundings, setProjectFundings] = useState({});
     const [projectModal, showProjectModal] = useState(false);
     const [transferProject, setTransferProject] = useState(null);
     const [transferOwnership, setTransferOwnership] = useState(null);
@@ -111,6 +113,7 @@ export function AgroFundProvider({children}){
         
     },[account, connectWallet]);
 
+
     useEffect( ()=>{
 
         const key = addProjectCreatedSubscriber('projects-listener', (error, event) => {
@@ -129,7 +132,36 @@ export function AgroFundProvider({children}){
 
         });
 
-        return () => removeProjectCreatedSubscriber(key);
+        const fundkey = addProjectFundedSubscriber (`projectfunded`, (error, event) => {
+            if(error){
+                return;
+            }
+
+            if(!event.event){
+                return;
+            }
+
+            const fundEvent = makeFunded(event.returnValues);
+
+            setProjectFundings( (prev) => {
+                const newFundings = prev;
+                const funding = newFundings[fundEvent.index];
+
+                if(funding){
+                    const amount = (parseFloat(funding.amount) + parseFloat(fundEvent.amount)).toFixed(2);
+                    newFundings[fundEvent.index] = {...funding, amount};
+                }else{
+                    newFundings[fundEvent.index] = fundEvent;
+                }
+
+                return newFundings;
+            })
+        });
+
+        return () => {
+            removeProjectCreatedSubscriber(key)
+            removeProjectFundedSubscriber(fundkey);
+        };
     },[]);
 
     return(
@@ -143,6 +175,7 @@ export function AgroFundProvider({children}){
             selectedCategories,
             projectModal,
             projects,
+            projectFundings,
             fundProject,
             isContractOwner,
             transferProject,

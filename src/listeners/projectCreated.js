@@ -1,6 +1,7 @@
 import { getContract } from "../services/agrofund";
 
 const subscribers = new Map();
+const executedTransactions = Object();
 
 export const addProjectCreatedSubscriber = (key, fn) => {
     if (typeof fn !== "function") {
@@ -21,11 +22,19 @@ export const removeProjectCreatedSubscriber = (key) => {
 async function Subscriptions() {
     const contract = await getContract();
 
+
     contract.events.ProjectCreated({
         fromBlock: 0,
         toBlock: 'latest'
     })
         .on("data", function (event) {
+            
+            if(executedTransactions[event.transactionHash]){
+                return;
+            }
+
+            executedTransactions[event.transactionHash] = true;
+
             subscribers.forEach((subscriber) => {
                 subscriber(null, event);
             })

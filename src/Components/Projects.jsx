@@ -1,10 +1,8 @@
 import { CrownOutlined} from "@ant-design/icons";
 import { createIcon } from "@download/blockies";
 import { Avatar, Badge, Button, Card, Col, Popconfirm, Row, Space, Typography } from "antd";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { AgroFundConsumer } from "../Context/AgrofundContract";
-import { makeFunded } from "../helpers/project";
-import { addProjectFundedSubscriber, removeProjectFundedSubscriber } from "../listeners/projectFunded";
 
 
 function FundProject({ fullyFunded = false, project = {} }) {
@@ -62,25 +60,9 @@ function AvatarIcon({account, isOwner = false}){
 }
 
 function ProjectCard(projectInfo = {}) {
-    const { index, name, description, images, location, startDate, endDate, goal, owner, account } = projectInfo;
-    const [funded, setFunded] = useState(0);
+    const { index, name, description, images, location, startDate, endDate, goal, owner, account, funds } = projectInfo;
     const isOwner = useMemo(() => owner?.toLowerCase() === account?.toLowerCase(), [owner, account])
-    const fullyFunded = useMemo(() => funded === goal, [funded, goal]);
-
-    useEffect(() => {
-        const key = addProjectFundedSubscriber(`project-${index}`, (error, event) => {
-
-            if(error){
-                return;
-            }
-            const fundEvent = makeFunded(event.returnValues);
-            if (fundEvent?.index?.toLowerCase() === index?.toLowerCase()) {
-                setFunded(prev => parseFloat(parseFloat(prev) + parseFloat(fundEvent.amount)).toFixed(2));
-            }
-        });
-
-        return () => removeProjectFundedSubscriber(key);
-    }, []);
+    const fullyFunded = useMemo(() => funds >= parseFloat(goal), [funds, goal]);
 
     return (
         <Card
@@ -105,7 +87,7 @@ function ProjectCard(projectInfo = {}) {
             <Space direction="vertical">
                 <span>Location: {location}</span>
                 <span>Goal: {goal} Celo</span>
-                <span>Fund: {funded} Celo</span>
+                <span>Fund: {funds} Celo</span>
                 {/* <Progress percent={funded} size="small" status="active" /> */}
                 <span>Starting: {new Date(parseInt(startDate)).toDateString()}</span>
                 <span>Ending: {new Date(parseInt(endDate)).toDateString()}</span>
@@ -119,7 +101,7 @@ function ProjectCard(projectInfo = {}) {
 export default function Projects() {
     return (
         <AgroFundConsumer>
-            {({ projects, selectedCategories, account }) => (
+            {({ projects, projectFundings, selectedCategories, account }) => (
                 <>
                     <Col xs={24}><Typography.Title level={4}>Projects</Typography.Title></Col>
                     <Row gutter={[16, 16]}>
@@ -135,7 +117,9 @@ export default function Projects() {
                                     :
                                     projects
                             )?.map(
-                                (projectInfo, idx) => <Col xs={24} sm={8} key={idx} ><ProjectCard {...projectInfo} account={account} /></Col>)
+                                (projectInfo, idx) => {
+                                return <Col xs={24} sm={8} key={idx} ><ProjectCard {...projectInfo} funds={ projectFundings[projectInfo?.index]?.amount || 0} account={account} /></Col>
+                            })
                         }
                     </Row>
                 </>

@@ -11,7 +11,7 @@ const FundProjectForm = ({ project_index, onReset }) => {
         <AgroFundConsumer>
             {({ fundProjectOnContract, fundProject }) =>
                 <Form
-                    initialValues={{ index: project_index, amount: 1 }}
+                    initialValues={{ index: project_index, amount: 0.01 }}
                     onReset={onReset}
                     form={form}
                     onFinish={async (values) => {
@@ -40,7 +40,7 @@ const FundProjectForm = ({ project_index, onReset }) => {
                         tooltip="How much do you intend to fund?"
                         rules={[{ required: true, message: 'Please provide a valid amount' }]}
                     >
-                        <InputNumber min={1} max={1000000} style={{ width: '100%' }} addonAfter="Celo" />
+                        <InputNumber min={0.01} max={1000000} step={0.01} style={{ width: '100%' }} addonAfter="Celo" />
                     </Form.Item>
 
                     <Form.Item>

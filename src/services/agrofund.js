@@ -9,12 +9,13 @@ const DECIMALS = agrofundInterface.decimals;
 
 async function getProvider() {
     if (!window.celo) {
-        throw new Error("Please install the CeloExtensionWallet.")
+        throw new Error("Please install the CeloExtensionWallet.");
     }
 
     await window.celo.enable();
 
     const web3 = new Web3(window.celo);
+
     const provider = newKitFromWeb3(web3);
 
     return provider;
@@ -53,7 +54,6 @@ export async function getContract() {
 
 export async function getProjects(indexes) {
     const contract = await getContract();
-
 
     const results = await new Promise.all(
         indexes.reduce(
