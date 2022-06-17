@@ -118,7 +118,7 @@ export default function Projects() {
                                     projects
                             )?.map(
                                 (projectInfo, idx) => {
-                                return <Col xs={24} sm={8} key={idx} ><ProjectCard {...projectInfo} funds={ projectFundings[projectInfo?.index]?.amount || 0} account={account} /></Col>
+                                return <Col xs={24} sm={12} lg={8} key={idx} ><ProjectCard {...projectInfo} funds={ projectFundings[projectInfo?.index]?.amount || 0} account={account} /></Col>
                             })
                         }
                     </Row>
